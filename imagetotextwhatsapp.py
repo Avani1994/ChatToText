@@ -21,7 +21,7 @@ import os
 import random
 import tesserocr
 import cv2
-from google.colab.patches import cv2_imshow
+#from google.colab.patches import cv2_imshow
 import re 
 from pylab import array, plot, show, axis, arange, figure, uint8 
 from skimage.measure import compare_ssim
@@ -34,10 +34,9 @@ except ImportError:
     import Image
 import json
 
-from google.colab import files
-
-
-
+#from google.colab import files
+import logging
+logging.getLogger("imported_module").setLevel(logging.WARNING)
 
 
 
@@ -133,7 +132,7 @@ def crop(im1, im2):
 
       return crop_img
     else:
-      print("Not equal")
+      #print("Not equal")
       return(None)
 
 def convert_img_to_text(arr):
@@ -190,8 +189,8 @@ def convert_img_to_text(arr):
         crop_img = final[max(0, y-inc):min(y+h+inc,height), max(0, x-inc):min(x+w+inc, width)]
         #cv2.circle(final,(int(threshold), y), 5, (255,0,0), -1)
         #print(crop_img)
-        cv2_imshow(crop_img)
-        cv2.waitKey(0)
+        #cv2_imshow(crop_img)
+        #cv2.waitKey(0)
         extractedInformation = pytesseract.image_to_string(crop_img)
         #print(extractedInformation)
         if('Type a message' in extractedInformation):
@@ -277,6 +276,13 @@ def convert_img_to_text(arr):
   # print(other)
   # print(writer)
 
+def main(arr):
+  print(convert_img_to_text(arr))
+
+
 if __name__ == '__main__':
   arr = ast.literal_eval( sys.argv[1] )
-  return(convert_img_to_text(arr))  
+  main(arr)
+  
+
+
