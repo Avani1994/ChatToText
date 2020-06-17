@@ -44,7 +44,16 @@ regextime = re.compile(r'((([0|'']?[1-9]|1[0-2])(:|\.|-)[0-5][0-9]((:|\.)[0-5][0
 regexAmPm = re.compile(r'(([\d])(' '|'')(.m|.M| .m| .M]))')
 regex24hr = re.compile(r'(((''|[\d])[\d])(:|\.|-)([\d][\d]))')
 
-
+def getMinMaxBorder(boxes):
+  minn = float('inf')
+  maxx = float('-inf')
+  for i, (im,box,_,_) in enumerate(boxes):
+    x,y,w,h = box['x'],box['y'],box['w'],box['h']
+    if(x < minn):
+      minn = x
+    if(x+w > maxx):
+      maxx = x+w
+  return (minn, maxx)
 
 def fill_rects(image, stats):
   for i,stat in enumerate(stats):
@@ -173,7 +182,8 @@ def convert_img_to_text(arr):
       # get text
       text = api.GetUTF8Text()
       height, width, c = final.shape
-      threshold = 0.10*width
+      #threshold = 0.10*width
+      minn, maxx = getMinMaxBorder(boxes)
       borderthreshold = 0.07*width 
       inc = int(0.01*width)
       message = ''
@@ -181,7 +191,7 @@ def convert_img_to_text(arr):
       # iterate over returned list, draw rectangles
       for i, (im,box,_,_) in enumerate(boxes):
         x,y,w,h = box['x'],box['y'],box['w'],box['h']
-        xprev,yprev,_,_ = boxes[i-1][1]['x'], boxes[i-1][1]['y'],boxes[i-1][1]['w'],boxes[i-1][1]['h']
+        xprev,yprev,wprev,hprev = boxes[i-1][1]['x'], boxes[i-1][1]['y'],boxes[i-1][1]['w'],boxes[i-1][1]['h']
         # print(y, yprev, i, "avnu")
         # print(xprev, threshold, "callu check")
         # print(inc, 'increase')
@@ -217,7 +227,9 @@ def convert_img_to_text(arr):
         #second case border detection
         if(abs(y-yprev) > borderthreshold):
           if(testMessage):
-            if(xprev < threshold):
+            valleft = abs(xprev - minn)
+            valright = abs(maxx-(xprev+wprev))
+            if(valleft < valright):
               temp = {}
               temp['name'] = 'other'
               temp['message'] = testMessage
@@ -257,7 +269,9 @@ def convert_img_to_text(arr):
         #cv2.rectangle(final, (x,y), (x+w,y+h), color=(0,255,0))
       
       if(testMessage):
-        if(x < threshold):
+        valleft = abs(x- minn)
+        valright = abs(maxx-(x+w))
+        if(valleft < valleft):
           temp = {}
           temp['name'] = 'other'
           temp['message'] = testMessage
@@ -273,8 +287,8 @@ def convert_img_to_text(arr):
   json_data = json.dumps(borderdata)
   return json_data
   #print(data)
-  # print(other)
-  # print(writer)
+  #print(other)
+  #print(writer)
 
 def main(arr):
   print(convert_img_to_text(arr))
