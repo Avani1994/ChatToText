@@ -1,12 +1,39 @@
+attrs==19.3.0
+certifi==2020.6.20
+cycler==0.10.0
+decorator==4.4.2
+flake8 @ file:///home/conda/feedstock_root/build_artifacts/flake8_1594584774608/work
+flake8-polyfill==1.0.2
+flake8-quotes @ file:///home/conda/feedstock_root/build_artifacts/flake8-quotes_1589330264223/work
+imageio==2.9.0
+importlib-metadata @ file:///home/conda/feedstock_root/build_artifacts/importlib-metadata_1593211372860/work
 imutils==0.5.3
+iniconfig @ file:///home/conda/feedstock_root/build_artifacts/iniconfig_1596221474428/work
+kiwisolver==1.2.0
 matplotlib==3.2.1
+mccabe==0.6.1
+more-itertools @ file:///home/conda/feedstock_root/build_artifacts/more-itertools_1592197792446/work
+networkx==2.4
 numpy==1.18.4
-scipy==1.4.1
+olefile==0.46
 opencv-contrib-python==3.4.2.16
 opencv-python==3.4.2.16
-tesserocr==2.5.1
-Pillow==7.1.2 
+packaging @ file:///home/conda/feedstock_root/build_artifacts/packaging_1589925210001/work
+pep8-naming @ file:///home/conda/feedstock_root/build_artifacts/pep8-naming_1593575242270/work
+Pillow==7.1.2
+pluggy @ file:///home/conda/feedstock_root/build_artifacts/pluggy_1592827468899/work
+py @ file:///home/conda/feedstock_root/build_artifacts/py_1593088446458/work
+pycodestyle @ file:///home/conda/feedstock_root/build_artifacts/pycodestyle_1589305246696/work
+pyflakes==2.2.0
+pyparsing==2.4.7
 pytesseract==0.3.4
-
-
-
+pytest==6.0.1
+python-dateutil==2.8.1
+PyWavelets==1.1.1
+scikit-image==0.17.2
+scipy==1.4.1
+six @ file:///home/conda/feedstock_root/build_artifacts/six_1590081179328/work
+tesserocr==2.5.1
+tifffile==2020.7.24
+toml @ file:///home/conda/feedstock_root/build_artifacts/toml_1589469402899/work
+zipp==3.1.0
