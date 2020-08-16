@@ -213,7 +213,7 @@ def detectEmoji(img, mode):
   #show = []
   emoji = []
   i = 0
-  path = os.path.abspath("./DetectedEmoji/")
+  path = os.path.abspath("../ChatToText/DetectedEmoji/")
   fileobj = Path(path)
   if fileobj.exists():
     shutil.rmtree(path)
@@ -222,10 +222,10 @@ def detectEmoji(img, mode):
   for x,y,w,h,pixels in filtered_boxes:
       side = max(w,h)
       crop_img = imagefinal[y-8:y+side, x-5:x+side+5]
-      cv2.imwrite(path + 'image' + str(i) + '.png', crop_img)
+      cv2.imwrite(path + '/image' + str(i) + '.png', crop_img)
       #cv2.rectangle(imagefinal, (x-5,y-8), (x+side+5,y+side), (0,0,255),2)
       #cv2_imshow(crop_img)
-      boundingBoxMapping[(x-5, y-8, x+side+5, y+side)] = path + 'image' + str(i) + '.png'
+      boundingBoxMapping[(x-5, y-8, x+side+5, y+side)] = path + '/image' + str(i) + '.png'
       #print(pixels)
       #print(x,y,w,h)
       #show.append(crop_img)
@@ -272,8 +272,8 @@ def fetchKeypointsandDescriptorsTest(imgpath):
   return keypointTest, descriptorTest
 
 def fetchDescriptorFromFile(emoji):
-    filepathL = os.path.abspath("./Descriptors/" + emoji + "/L.txt")
-    filepathD = os.path.abspath("./Descriptors/" + emoji + "/D.txt")
+    filepathL = os.path.abspath("../ChatToText/Descriptors/" + emoji + "/L.txt")
+    filepathD = os.path.abspath("../ChatToText/Descriptors/" + emoji + "/D.txt")
     descriptorL = None
     descriptorD = None
     fileobjL = Path(filepathL)
@@ -289,8 +289,8 @@ def fetchDescriptorFromFile(emoji):
     return descriptorL, descriptorD
 
 def fetchKeypointFromFile(emoji):
-    filepathL = os.path.abspath("./Keypoints/" + emoji + "/L.txt")
-    filepathD = os.path.abspath("./Keypoints/" + emoji + "/D.txt")
+    filepathL = os.path.abspath("../ChatToText/Keypoints/" + emoji + "/L.txt")
+    filepathD = os.path.abspath("../ChatToText/Keypoints/" + emoji + "/D.txt")
     # str(imageList[i].split('.')[0]) + ".txt"
     keypointL = []
     keypointD = []
@@ -350,7 +350,7 @@ def findEmojiMatch(emoji):
     matchEmoji = None
     keypointEmoji,descriptorEmoji = fetchKeypointsandDescriptorsTest(emoji)
     #,_ = fetchDescriptorFromFile(emoji)
-    subdirs = [x[0] for x in os.walk(os.path.abspath("./InitialTestSIFTFeatures/"))]                                                                            
+    subdirs = [x[0] for x in os.walk(os.path.abspath("../ChatToText/InitialTestSIFTFeatures/"))]                                                                            
     for subdir in subdirs[1:]:
         #r[subdir] =  {} 
         #print(subdir)
@@ -419,8 +419,9 @@ def convert_img_to_text(arr):
       final = cv2.imread(img)
 
     '''DETECT EMOJIS HERE FIRST AND SAVE THEM IN A FOLDER'''
-    cv2.imwrite('actual.PNG', final)
-    imgFileToBBMapping = detectEmoji('actual.PNG', mode)
+    pathActual = os.path.abspath('../ChatToText/actual.PNG')
+    cv2.imwrite(pathActual, final)
+    imgFileToBBMapping = detectEmoji(pathActual, mode)
     emojiMappingInImg = {}
     for bb,emoji in imgFileToBBMapping.items():
       matchedEmoji, maxScore = findEmojiMatch(emoji)
