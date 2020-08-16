@@ -213,7 +213,7 @@ def detectEmoji(img, mode):
   #show = []
   emoji = []
   i = 0
-  path = "./DetectedEmoji/"
+  path = os.path.abspath("./DetectedEmoji/")
   fileobj = Path(path)
   if fileobj.exists():
     shutil.rmtree(path)
@@ -272,8 +272,8 @@ def fetchKeypointsandDescriptorsTest(imgpath):
   return keypointTest, descriptorTest
 
 def fetchDescriptorFromFile(emoji):
-    filepathL = "./Descriptors/" + emoji + "/L.txt"
-    filepathD = "./Descriptors/" + emoji + "/D.txt"
+    filepathL = os.path.abspath("./Descriptors/" + emoji + "/L.txt")
+    filepathD = os.path.abspath("./Descriptors/" + emoji + "/D.txt")
     descriptorL = None
     descriptorD = None
     fileobjL = Path(filepathL)
@@ -289,8 +289,8 @@ def fetchDescriptorFromFile(emoji):
     return descriptorL, descriptorD
 
 def fetchKeypointFromFile(emoji):
-    filepathL = "./Keypoints/" + emoji + "/L.txt"
-    filepathD = "./Keypoints/" + emoji + "/D.txt"
+    filepathL = os.path.abspath("./Keypoints/" + emoji + "/L.txt")
+    filepathD = os.path.abspath("./Keypoints/" + emoji + "/D.txt")
     # str(imageList[i].split('.')[0]) + ".txt"
     keypointL = []
     keypointD = []
@@ -350,7 +350,7 @@ def findEmojiMatch(emoji):
     matchEmoji = None
     keypointEmoji,descriptorEmoji = fetchKeypointsandDescriptorsTest(emoji)
     #,_ = fetchDescriptorFromFile(emoji)
-    subdirs = [x[0] for x in os.walk("./InitialTestSIFTFeatures/")]                                                                            
+    subdirs = [x[0] for x in os.walk(os.path.abspath("./InitialTestSIFTFeatures/"))]                                                                            
     for subdir in subdirs[1:]:
         #r[subdir] =  {} 
         #print(subdir)
