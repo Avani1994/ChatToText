@@ -156,7 +156,6 @@ def detectEmoji(img, mode):
     #image = cv2.imread('sanyatext.jpeg',0) # load as 1-channel 8bit grayscale
   imagefinal = cv2.imread(img)
   height,width,c = imagefinal.shape
-  print(height,width)
   pixelsthresh = 0.007 * height * width
   heightupperthresh = 0.000093 * height * width
   widthupperthresh = 0.000093 * height * width
