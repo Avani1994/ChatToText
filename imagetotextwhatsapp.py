@@ -155,6 +155,13 @@ def detectEmoji(img, mode):
   image = cv2.imread(img,0) # load as 1-channel 8bit grayscale
     #image = cv2.imread('sanyatext.jpeg',0) # load as 1-channel 8bit grayscale
   imagefinal = cv2.imread(img)
+  height,width,c = imagefinal.shape
+  print(height,width)
+  pixelsthresh = 0.007 * height * width
+  heightupperthresh = 0.000093 * height * width
+  widthupperthresh = 0.000093 * height * width
+  heightlowerthresh = 0.0000144 * height * width
+  widthlowerthresh = 0.000019 * height * width
   
   '''
   img = image
@@ -205,7 +212,7 @@ def detectEmoji(img, mode):
   filtered_boxes = []
   for x,y,w,h,pixels in boxes:
       #print(pixels)
-      if pixels < 15000 and h < 200 and w < 200 and h > 31 and w > 40: 
+      if pixels < pixelsthresh and h < heightupperthresh and w < widthupperthresh and h > heightlowerthresh  and w > widthlowerthresh: 
         #these are values for filtering boxes as we only want boxes which contain emoji in them
         filtered_boxes.append((x,y,w,h,pixels))
 
@@ -322,16 +329,22 @@ def calculateMatches(des1,des2):
     bf = cv2.BFMatcher()
     matches = bf.knnMatch(des1,des2,k=2)
     topResults1 = []
-    for m,n in matches:
-        if m.distance < 0.7*n.distance:
-            topResults1.append([m])
-            
+    for i, pair in enumerate(matches):
+      try:
+          m, n = pair
+          if m.distance < 0.7*n.distance:
+              topResults1.append([m])
+      except ValueError:
+          pass            
     matches = bf.knnMatch(des2,des1,k=2)
     topResults2 = []
-    for m,n in matches:
-        if m.distance < 0.7*n.distance:
-            topResults2.append([m])
-    
+    for i, pair in enumerate(matches):
+      try:
+          m, n = pair
+          if m.distance < 0.7*n.distance:
+              topResults2.append([m])
+      except ValueError:
+          pass
     topResults = []
     for match1 in topResults1:
         match1QueryIndex = match1[0].queryIdx
@@ -347,7 +360,7 @@ def calculateMatches(des1,des2):
 
 def findEmojiMatch(emoji):
     maxScore = float('-inf')
-    matchEmoji = None
+    matchedEmoji = None
     keypointEmoji,descriptorEmoji = fetchKeypointsandDescriptorsTest(emoji)
     #,_ = fetchDescriptorFromFile(emoji)
     subdirs = [x[0] for x in os.walk(os.path.abspath("../ChatToText/InitialTestSIFTFeatures/"))]                                                                            
@@ -364,10 +377,10 @@ def findEmojiMatch(emoji):
           scoreL = float('-inf')
           scoreD = float('-inf')
           #print(descriptorL)
-          if(keypointL):
+          if(keypointL and descriptorEmoji is not None and len(descriptorEmoji) > 0):
             matchesL = calculateMatches(descriptorEmoji, descriptorL)
             scoreL = calculateScore(len(matchesL), len(keypointEmoji), len(keypointL))
-          if(keypointD):
+          if(keypointD and descriptorEmoji is not None and len(descriptorEmoji) > 0):
             matchesD = calculateMatches(descriptorEmoji, descriptorD)
             scoreD = calculateScore(len(matchesD), len(keypointEmoji), len(keypointD))
           
@@ -425,7 +438,7 @@ def convert_img_to_text(arr):
     emojiMappingInImg = {}
     for bb,emoji in imgFileToBBMapping.items():
       matchedEmoji, maxScore = findEmojiMatch(emoji)
-      if(maxScore > 4):
+      if(matchedEmoji != None and maxScore >= 8):
         unicodeEmoji = returnEmojiNameToUnicodeMapping()[matchedEmoji] 
         emojiMappingInImg[bb] = unicodeEmoji
     '''******************'''
@@ -506,7 +519,7 @@ def convert_img_to_text(arr):
           #print( textboxtopleftx , textboxtoplefty, textboxbottomrightx,  textboxbottomrighty)
           #print(nextTextBoxtoplefty, "next textbox topleft y")
           # If emojis lies within current textbox
-          if(topleftx >= textboxtopleftx and toplefty >=  textboxtoplefty and bottomrightx <= textboxbottomrightx and bottomrighty <= textboxbottomrighty):
+          if(topleftx >= textboxtopleftx-5 and toplefty >=  textboxtoplefty-5 and bottomrightx <= textboxbottomrightx+5 and bottomrighty <= textboxbottomrighty+5):
             emojisTobeAppended.append(emoji)
           
           # For individual emojis in next line
