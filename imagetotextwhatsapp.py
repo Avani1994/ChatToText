@@ -151,6 +151,36 @@ def crop(im1, im2):
       #print("Not equal")
       return(None)
 
+	
+def fixDarkMode(image, mode):
+    maxIntensity = 90.0 # depends on dtype of image data
+    # Parameters for manipulating image data
+    phi = 1.5
+    theta = 0.9
+    # Decrease intensity such that
+    # dark pixels become much darker, 
+    # bright pixels become slightly dark 
+    newImage1 = (maxIntensity/phi)*(image/(maxIntensity/theta))**1.5
+    newImage1 = array(newImage1,dtype=uint8)
+    mask = cv2.bitwise_not(newImage1)
+    cv2_imshow(newImage1)
+    # use mask or not based on dark mode or light mode image ("newImage1" for light mode and "mask" for dark mode)
+    if(mode == 'Light'):
+      finalImg = newImage1
+    else:
+      finalImg = mask
+    #print(final)
+    
+    # image manipulation to change every pixel value based on some threshold value (here 140)
+    for x in finalImg:
+      for pixel in range(0,len(x)):
+        if(0<x[pixel]<140):
+          x[pixel]=0
+        if(x[pixel]>=140):
+          x[pixel]=255
+    
+    return finalImg
+
 def detectEmoji(img, mode):
   image = cv2.imread(img,0) # load as 1-channel 8bit grayscale
     #image = cv2.imread('sanyatext.jpeg',0) # load as 1-channel 8bit grayscale
@@ -436,14 +466,25 @@ def convert_img_to_text(arr):
     imgFileToBBMapping = detectEmoji(pathActual, mode)
     emojiMappingInImg = {}
     for bb,emoji in imgFileToBBMapping.items():
+      if mode == 'Dark':
+        cv2.rectangle(final, (bb[0],bb[1]), (bb[2],bb[3]), (0,0,0), -1)
+      else:
+        cv2.rectangle(final, (bb[0],bb[1]), (bb[2],bb[3]), (255,255,255), -1)
       matchedEmoji, maxScore = findEmojiMatch(emoji)
       if(matchedEmoji != None and maxScore >= 8):
         unicodeEmoji = returnEmojiNameToUnicodeMapping()[matchedEmoji] 
         emojiMappingInImg[bb] = unicodeEmoji
     '''******************'''
+    pathActualForNoiseRemoval = os.path.abspath('../ChatToText/noiseRemoved.PNG')
+    cv2.imwrite(pathActualForNoiseRemoval, final)
+    im = cv2.imread(pathActualForNoiseRemoval,0)
+    fixedMode = fixDarkMode(im, mode)
 
-    # since tesserocr accepts PIL images, converting opencv image to pil
-    pil_img = Image.fromarray(cv2.cvtColor(final, cv2.COLOR_BGR2RGB))
+    imbeforenoiseremoval = cv2.imread(pathActual,0)
+    fixedModeBeforeNoise = fixDarkMode(imbeforenoiseremoval, mode)
+
+    #since tesserocr accepts PIL images, converting opencv image to pil
+    pil_img = Image.fromarray(cv2.cvtColor(fixedModeBeforeNoise, cv2.COLOR_GRAY2RGB))
     #initialize api
     api = tesserocr.PyTessBaseAPI()
     try:
@@ -502,7 +543,7 @@ def convert_img_to_text(arr):
         textboxbottomrightx = min(x+w+inc, width)
         textboxbottomrighty = min(y+h+inc,height)
         nextTextBoxtoplefty = max(0, ynext-inc)
-        crop_img = final[max(0, y-inc):min(y+h+inc,height), max(0, x-inc):min(x+w+inc, width)]
+        crop_img = fixedMode[max(0, y-inc):min(y+h+inc,height), max(0, x-inc):min(x+w+inc, width)]
         #cv2.circle(final,(int(threshold), y), 5, (255,0,0), -1)
         #print(crop_img)
         #cv2_imshow(crop_img)
