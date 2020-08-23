@@ -163,7 +163,6 @@ def fixDarkMode(image, mode):
     newImage1 = (maxIntensity/phi)*(image/(maxIntensity/theta))**1.5
     newImage1 = array(newImage1,dtype=uint8)
     mask = cv2.bitwise_not(newImage1)
-    cv2_imshow(newImage1)
     # use mask or not based on dark mode or light mode image ("newImage1" for light mode and "mask" for dark mode)
     if(mode == 'Light'):
       finalImg = newImage1
