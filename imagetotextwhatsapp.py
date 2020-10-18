@@ -604,11 +604,11 @@ def convert_img_to_text(arr):
             if(valleft < valright):
               temp = {}
               temp['name'] = 'other'
-              temp['message'] = testMessage
+              temp['message'] = testMessage.strip()
             else:
               temp = {}
               temp['name'] = 'writer'
-              temp['message'] = testMessage  
+              temp['message'] = testMessage.strip()
             borderdata['data'].append(temp)
           
           testMessage = ''
@@ -626,12 +626,12 @@ def convert_img_to_text(arr):
               other.append(emojiString)
               temp = {}
               temp['name'] = 'other'
-              temp['message'] = emojiString
+              temp['message'] = emojiString.strip()
             else:
               writer.append(emojiString)
               temp = {}
               temp['name'] = 'writer'
-              temp['message'] = emojiString
+              temp['message'] = emojiString.strip()
             borderdata['data'].append(temp)
         
         else:
@@ -666,11 +666,11 @@ def convert_img_to_text(arr):
         if(valleft < valleft):
           temp = {}
           temp['name'] = 'other'
-          temp['message'] = testMessage
+          temp['message'] = testMessage.strip()
         else:
           temp = {}
           temp['name'] = 'writer'
-          temp['message'] = testMessage
+          temp['message'] = testMessage.strip()
         borderdata['data'].append(temp)
       testMessage = '' 
       #check if last line contains individual emojis
@@ -691,13 +691,13 @@ def convert_img_to_text(arr):
           other.append(lastLineEmojiString)
           temp = {}
           temp['name'] = 'other'
-          temp['message'] = lastLineEmojiString
+          temp['message'] = lastLineEmojiString.strip()
           #temp['time'] = t
         else:
           writer.append(lastLineEmojiString)
           temp = {}
           temp['name'] = 'writer'
-          temp['message'] = lastLineEmojiString
+          temp['message'] = lastLineEmojiString.strip()
           #temp['time'] = t
         borderdata['data'].append(temp)
     finally:
